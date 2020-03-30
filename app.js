@@ -11,7 +11,7 @@ const secretKey = 'kkofjow78310ifjl'
 
 app.get('/api/sign', (req, res) => {
   const user = {
-    id: 101,
+    id: 100,
     name: 'miyazaki'
   }
 
