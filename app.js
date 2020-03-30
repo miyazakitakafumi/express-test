@@ -1,6 +1,6 @@
 const express = require("express")
 const jwt = require('jsonwebtoken')
-const getToken = require('./token')
+const tokenHelper = require('./token')
 
 const app = express()
 const server = app.listen(3333, () => {
@@ -15,7 +15,7 @@ app.get('/api/sign', (req, res) => {
     name: 'miyazaki'
   }
 
-  const token = jwt.sign(user, secretKey, { expiresIn: '30s' })
+  const token = tokenHelper.createToken(user)
 
   res.json({
     token
@@ -24,19 +24,16 @@ app.get('/api/sign', (req, res) => {
 
 
 app.get('/api/post', (req, res, next) => {
-  const token = getToken(req)
+  const auth = tokenHelper.verifyToken(req)
 
-  jwt.verify(token, secretKey, (err, decoded) => {
-    if(err !== null){
-      res.json({
-        err,
-        token
-      })
-    }
+  if(auth.err !== null) {
+    res.json({
+      err: auth.err
+    })
+  } else {
     res.json({
       result: 'post ok',
-      user: decoded,
+      user: auth.user
     })
-  })
-
+  }
 })
